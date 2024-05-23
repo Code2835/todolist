@@ -2,58 +2,112 @@ package com.bcs.todolist.role;
 
 import com.bcs.todolist.common.FileProcessor;
 import com.bcs.todolist.common.FileProcessorService;
+import com.bcs.todolist.role.dto.SaveOrUpdateRoleDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RoleService {
     private final static String DATA_FILE_NAME = "role.json";
-
     private FileProcessor fileProcessor;
 
+    private final RoleRepository roleRepository;
+
     @Autowired
-    public RoleService(FileProcessor fileProcessor) {
-        this.fileProcessor = fileProcessor;
+    public RoleService(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
     }
+
+//    @Autowired
+//    public RoleService(FileProcessor fileProcessor) {
+//        this.fileProcessor = fileProcessor;
+//    }
 
     public List<Role> getAllRoles() {
-        return this.fileProcessor.readAsList(DATA_FILE_NAME, Role[].class);
+        return roleRepository.findAll();
     }
 
-    public Role getRoleById(Integer id) {
-        List<Role> roles = getAllRoles();
+//    public List<Role> getAllRoles() {
+//        return this.fileProcessor.readAsList(DATA_FILE_NAME, Role[].class);
+//    }
 
-        for (Role role : roles) {
-            if (role.getId().equals(id)) {
-                return role;
-            }
+    public Role getRoleById(Integer id) {
+        Optional<Role> role = roleRepository.findById(id);
+
+        if (role.isPresent()) {
+            return role.get();
         }
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    public void saveRole(Role role) {
-        List<Role> roles = getAllRoles();
+//    public Role getRoleById(Integer id) {
+//        List<Role> roles = getAllRoles();
+//
+//        for (Role role : roles) {
+//            if (role.getId().equals(id)) {
+//                return role;
+//            }
+//        }
+//
+//        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+//    }
 
-        roles.add(role);
+    public void saveRole(SaveOrUpdateRoleDto dto) {
+        Role role = new Role();
+        role.setName(dto.name());
 
-        fileProcessor.update(DATA_FILE_NAME, roles);
+        try {
+            roleRepository.save(role);
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    public void deleteRole(Integer id) {
-        List<Role> roles = getAllRoles();
+//    public void saveRole(Role role) {
+//        roleRepository.save(role);
+//    }
 
-        for (Role role : roles) {
-            if (role.getId().equals(id)) {
-                roles.remove(role);
-                break;
-            }
+    public void updateRole(Integer id, SaveOrUpdateRoleDto dto) {
+        if (!roleRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
-        fileProcessor.update(DATA_FILE_NAME, roles);
+        try {
+            roleRepository.update(id, dto.name());
+        } catch (DataIntegrityViolationException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
+
+//    public void saveRole(Role role) {
+//        List<Role> roles = getAllRoles();
+//
+//        roles.add(role);
+//
+//        fileProcessor.update(DATA_FILE_NAME, roles);
+//    }
+
+    public void deleteRole(Integer id) {
+        roleRepository.deleteById(id);
+    }
+
+//    public void deleteRole(Integer id) {
+//        List<Role> roles = getAllRoles();
+//
+//        for (Role role : roles) {
+//            if (role.getId().equals(id)) {
+//                roles.remove(role);
+//                break;
+//            }
+//        }
+//
+//        fileProcessor.update(DATA_FILE_NAME, roles);
+//    }
 }
