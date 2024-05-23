@@ -1,9 +1,12 @@
 package com.bcs.todolist.role;
 
+import com.bcs.todolist.person.Person;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -40,6 +43,9 @@ public class Role {
 //    public void setName(String name) {
 //        this.name = name;
 //    }
+
+    @OneToMany(mappedBy = "role")
+    private Set<Person> persons;
 
     @Override
     public String toString() {
