@@ -1,5 +1,6 @@
 package com.bcs.todolist.role;
 
+import com.bcs.todolist.role.dto.GetRoleDto;
 import com.bcs.todolist.role.dto.SaveOrUpdateRoleDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,12 @@ public class RoleController {
     }
 
     @GetMapping
-    public List<Role> getAllRoles() {
+    public List<GetRoleDto> getAllRoles() {
         return roleService.getAllRoles();
     }
 
     @GetMapping("/{id}")
-    public Role getRoleById(@PathVariable("id") Integer id) {
+    public GetRoleDto getRoleById(@PathVariable("id") Integer id) {
         return roleService.getRoleById(id);
     }
 

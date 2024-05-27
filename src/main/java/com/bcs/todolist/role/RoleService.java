@@ -2,6 +2,7 @@ package com.bcs.todolist.role;
 
 import com.bcs.todolist.common.FileProcessor;
 import com.bcs.todolist.common.FileProcessorService;
+import com.bcs.todolist.role.dto.GetRoleDto;
 import com.bcs.todolist.role.dto.SaveOrUpdateRoleDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,6 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class RoleService {
@@ -29,19 +32,27 @@ public class RoleService {
 //        this.fileProcessor = fileProcessor;
 //    }
 
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+    public List<GetRoleDto> getAllRoles() {
+//        return roleRepository.findAll();
+        List<Role> roles = roleRepository.findAll();
+
+        return roles.stream()
+                .map(role -> new GetRoleDto(role.getId(), role.getName()))
+                .toList();
     }
 
 //    public List<Role> getAllRoles() {
 //        return this.fileProcessor.readAsList(DATA_FILE_NAME, Role[].class);
 //    }
 
-    public Role getRoleById(Integer id) {
+    public GetRoleDto getRoleById(Integer id) {
         Optional<Role> role = roleRepository.findById(id);
 
         if (role.isPresent()) {
-            return role.get();
+//            return role.get();
+            Role roleById = role.get();
+
+            return new GetRoleDto(roleById.getId(), roleById.getName());
         }
 
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
