@@ -3,12 +3,14 @@ package com.bcs.todolist.person;
 import com.bcs.todolist.person.dto.GetPersonDto;
 import com.bcs.todolist.person.dto.SaveOrUpdatePersonDto;
 import com.bcs.todolist.role.dto.SaveOrUpdateRoleDto;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/person")
 public class PersonController {

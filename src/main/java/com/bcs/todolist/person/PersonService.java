@@ -8,25 +8,35 @@ import com.bcs.todolist.role.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.security.auth.callback.PasswordCallback;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PersonService {
-    private final static String DATA_FILE_NAME = "person.json";
-    private FileProcessor fileProcessor;
-
+//    private final static String DATA_FILE_NAME = "person.json";
     private final PersonRepository personRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+//    private FileProcessor fileProcessor;
+
+//    private final PersonRepository personRepository;
+//    private final RoleRepository roleRepository;
 
     @Autowired
-    public PersonService(PersonRepository personRepository, RoleRepository roleRepository) {
+    public PersonService(
+            PersonRepository personRepository,
+            RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder
+    ) {
 //        this.fileProcessor = fileProcessor;
         this.personRepository = personRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<GetPersonDto> getAllPersons() {
@@ -142,4 +152,13 @@ public class PersonService {
     }
 
 
+    public Optional<Person> getPersonByUsernameAndPassword(String username, String password) {
+        Optional<Person> person = personRepository.findByUsername(username);
+
+        if (person.isPresent() && passwordEncoder.matches(password, person.get().getPassword())) {
+            return person;
+        }
+
+        return Optional.empty();
+    }
 }

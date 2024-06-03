@@ -1,5 +1,8 @@
 package com.bcs.todolist.todoitem;
 
+import jakarta.persistence.Entity;
+
+
 public class TodoItem {
     private Integer id;
     private String item;
