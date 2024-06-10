@@ -50,6 +50,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers(HttpMethod.POST, "/login" ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/greeting" ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout((l) -> l.clearAuthentication(true));
