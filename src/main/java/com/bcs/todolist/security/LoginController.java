@@ -4,38 +4,41 @@ import com.bcs.todolist.person.Person;
 import com.bcs.todolist.person.PersonService;
 import com.bcs.todolist.security.dto.LoginRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-@RestController
-public class AuthController {
+@Controller
+public class LoginController {
     private PersonService personService;
     private JwtService jwtService;
 
     @Autowired
-    public AuthController(PersonService personService, JwtService jwtService) {
+    public LoginController(PersonService personService, JwtService jwtService) {
         this.personService = personService;
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto loginRequestDto) {
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    @PostMapping(path = "/todolist-login", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE })
+    public String todolistLogin(LoginRequestDto loginRequestDto, Model model) {
         Optional<Person> person = personService.getPersonByUsernameAndPassword(loginRequestDto.username(), loginRequestDto.password());
 
         if (person.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username or password is incorrect");
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username or password is incorrect");
+            model.addAttribute("error", "Username or password is incorrect");
+            return "login";
         }
 
-        return jwtService.createToken(person.get());
+//        return jwtService.createToken(person.get());
+        return "redirect:/greeting";
     }
-
-
 }

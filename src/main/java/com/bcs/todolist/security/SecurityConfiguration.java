@@ -50,6 +50,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .requestMatchers(HttpMethod.POST, "/login" ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/login" ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/todolist-login" ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/greeting" ).permitAll()
                         .anyRequest().authenticated()
                 )
