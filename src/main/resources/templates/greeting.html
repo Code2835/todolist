@@ -16,12 +16,26 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        .logout {
+            margin-top: 30px;
+        }
     </style>
 </head>
 
 <body>
     <h1 th:text="${message}"></h1>
     <button onclick="greet()">Click me!</button>
+
+    <div>
+        <a th:href="@{/roles}">Roles list</a>
+    </div>
+
+    <div class="logout">
+        <form th:action="@{/logout}">
+            <input type="submit" value="Log out">
+        </form>
+    </div>
 
     <script>
         function greet() {

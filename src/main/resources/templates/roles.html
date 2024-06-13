@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Roles</title>
+</head>
+
+<body>
+    <h1>Roles</h1>
+
+    <table>
+        <tr>
+            <th>Role id</th>
+            <th>Role name</th>
+        </tr>
+        <tr th:each="role : ${roles}">
+            <td th:text="${role.id}"></td>
+            <td th:text="${role.name}"></td>
+        </tr>
+    </table>
+
+    <div>
+        <form th:action="@{/logout}">
+            <input type="submit" value="Log out">
+        </form>
+    </div>
+
+</body>
+
+</html>

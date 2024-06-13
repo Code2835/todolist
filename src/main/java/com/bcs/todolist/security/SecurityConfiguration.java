@@ -52,7 +52,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/login" ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/login" ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/todolist-login" ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/greeting" ).permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/greeting" ).permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/roles" ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout((l) -> l.clearAuthentication(true));

@@ -3,6 +3,7 @@ package com.bcs.todolist.security;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +39,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse  response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
+        Cookie[] cookies = request.getCookies();
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String tokenFromCookie = null;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("token")) {
+                    tokenFromCookie = cookie.getValue();
+                }
+            }
+        }
+
+
+        String authHeader = request.getHeader("Authorization");
+        boolean isAuthHeaderPresent = authHeader != null && authHeader.startsWith("Bearer ");
+
+        if (!isAuthHeaderPresent && tokenFromCookie == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authHeader.substring(7);
+        String token = isAuthHeaderPresent ? authHeader.substring(7) : tokenFromCookie;
+
         Claims claims = jwtService.extractAllClaims(token);
         String username = claims.getSubject();
 
